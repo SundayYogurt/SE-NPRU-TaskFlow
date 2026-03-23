@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import { Link } from 'react-router-dom';
 import { Plus, Trash2, Edit2, AlertCircle, Clock, CheckCircle, Search, BarChart2 } from 'lucide-react';
+import { PieChart, Pie, Cell, BarChart, Bar, XAxis, Tooltip as RechartsTooltip, ResponsiveContainer } from 'recharts';
 import useTaskStore from '../stores/taskStore';
 import TaskModal from '../components/TaskModal';
 
@@ -23,6 +24,19 @@ const Dashboard = () => {
   const totalTasks = tasks.length;
   const doneTasks = tasks.filter(t => t.status === 'done').length;
   const inProgressTasks = tasks.filter(t => t.status === 'inprogress').length;
+  const todoTasks = tasks.filter(t => t.status === 'todo').length;
+
+  const statusData = [
+    { name: 'To Do', value: todoTasks, color: '#9CA3AF' },
+    { name: 'In Progress', value: inProgressTasks, color: '#F59E0B' },
+    { name: 'Done', value: doneTasks, color: '#10B981' }
+  ].filter(d => d.value > 0);
+
+  const priorityData = [
+    { name: 'Low', count: tasks.filter(t => t.priority === 'low').length },
+    { name: 'Medium', count: tasks.filter(t => t.priority === 'medium').length },
+    { name: 'High', count: tasks.filter(t => t.priority === 'high').length }
+  ];
 
   const handleCreateTask = async (taskData) => {
     await addTask(taskData);
@@ -54,15 +68,7 @@ const Dashboard = () => {
 
   return (
     <>
-    <div className="animate-fade-in-up">
-      <div className="mac-window" style={{ display: 'flex', flexDirection: 'column', minHeight: '80vh', marginBottom: '32px' }}>
-        <div className="mac-header" style={{ position: 'sticky', top: 0, zIndex: 10 }}>
-          <span className="mac-dot close"></span>
-          <span className="mac-dot minimize"></span>
-          <span className="mac-dot maximize"></span>
-        </div>
-        
-        <div style={{ padding: '32px', flex: 1, background: '#F8F9FA' }}>
+    <div className="animate-fade-in-up" style={{ paddingBottom: '40px' }}>
           <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '32px' }}>
             <div>
               <h1 style={{ fontSize: '2rem', margin: 0, color: '#202124' }}>My Tasks</h1>
@@ -75,19 +81,61 @@ const Dashboard = () => {
 
       {/* Statistics Row */}
       <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(200px, 1fr))', gap: '16px', marginBottom: '24px' }}>
-        <div className="glass" style={{ padding: '24px', borderLeft: '4px solid var(--primary)' }}>
+        <div className="glass" style={{ padding: '24px' }}>
           <h3 style={{ margin: 0, color: 'var(--text-muted)', fontSize: '0.9rem', display: 'flex', alignItems: 'center', gap: '8px' }}><BarChart2 size={16} /> Total Tasks</h3>
           <p style={{ margin: '8px 0 0 0', fontSize: '2rem', fontWeight: 'bold', color: '#202124' }}>{totalTasks}</p>
         </div>
-        <div className="glass" style={{ padding: '24px', borderLeft: '4px solid var(--warning)' }}>
+        <div className="glass" style={{ padding: '24px' }}>
           <h3 style={{ margin: 0, color: 'var(--text-muted)', fontSize: '0.9rem' }}>In Progress</h3>
           <p style={{ margin: '8px 0 0 0', fontSize: '2rem', fontWeight: 'bold', color: '#202124' }}>{inProgressTasks}</p>
         </div>
-        <div className="glass" style={{ padding: '24px', borderLeft: '4px solid var(--success)' }}>
+        <div className="glass" style={{ padding: '24px' }}>
           <h3 style={{ margin: 0, color: 'var(--text-muted)', fontSize: '0.9rem' }}>Completed</h3>
           <p style={{ margin: '8px 0 0 0', fontSize: '2rem', fontWeight: 'bold', color: '#202124' }}>{doneTasks}</p>
         </div>
       </div>
+
+      {/* Charts Row */}
+      {tasks.length > 0 && (
+        <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(300px, 1fr))', gap: '16px', marginBottom: '32px' }}>
+          <div className="glass" style={{ padding: '24px', display: 'flex', flexDirection: 'column', alignItems: 'center' }}>
+            <h3 style={{ margin: '0 0 16px 0', color: 'var(--text-muted)', fontSize: '1rem' }}>Task Status</h3>
+            <div style={{ width: '100%', height: '220px' }}>
+              <ResponsiveContainer width="100%" height="100%">
+                <PieChart>
+                  <Pie data={statusData} cx="50%" cy="50%" innerRadius={60} outerRadius={80} paddingAngle={5} dataKey="value">
+                    {statusData.map((entry, index) => (
+                      <Cell key={`cell-${index}`} fill={entry.color} />
+                    ))}
+                  </Pie>
+                  <RechartsTooltip contentStyle={{ borderRadius: '8px', border: 'none', boxShadow: '0 4px 12px rgba(0,0,0,0.1)' }} />
+                </PieChart>
+              </ResponsiveContainer>
+            </div>
+            <div style={{ display: 'flex', gap: '16px', marginTop: '16px', fontSize: '0.85rem' }}>
+              {statusData.map((s, i) => (
+                <div key={i} style={{ display: 'flex', alignItems: 'center', gap: '6px' }}>
+                  <span style={{ width: '10px', height: '10px', borderRadius: '50%', background: s.color }}></span>
+                  {s.name}
+                </div>
+              ))}
+            </div>
+          </div>
+
+          <div className="glass" style={{ padding: '24px', display: 'flex', flexDirection: 'column', alignItems: 'center' }}>
+            <h3 style={{ margin: '0 0 16px 0', color: 'var(--text-muted)', fontSize: '1rem' }}>Task Priorities</h3>
+            <div style={{ width: '100%', height: '220px' }}>
+              <ResponsiveContainer width="100%" height="100%">
+                <BarChart data={priorityData} margin={{ top: 10, right: 10, left: -20, bottom: 0 }}>
+                  <XAxis dataKey="name" tick={{ fontSize: 12, fill: '#5F6368' }} axisLine={false} tickLine={false} />
+                  <RechartsTooltip cursor={{ fill: 'rgba(0,0,0,0.05)' }} contentStyle={{ borderRadius: '8px', border: 'none', boxShadow: '0 4px 12px rgba(0,0,0,0.1)' }} />
+                  <Bar dataKey="count" fill="#4285F4" radius={[4, 4, 0, 0]} barSize={40} />
+                </BarChart>
+              </ResponsiveContainer>
+            </div>
+          </div>
+        </div>
+      )}
 
       {/* Search & Filter Bar */}
       <div className="glass" style={{ padding: '16px', marginBottom: '32px', display: 'flex', gap: '16px', flexWrap: 'wrap', alignItems: 'center' }}>
@@ -174,8 +222,6 @@ const Dashboard = () => {
           ))}
         </div>
       )}
-        </div>
-      </div>
     </div>
 
       <TaskModal 
