@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import { Link } from 'react-router-dom';
 import { Plus, Trash2, Edit2, AlertCircle, Clock, CheckCircle, Search, BarChart2 } from 'lucide-react';
-import { PieChart, Pie, Cell, BarChart, Bar, XAxis, Tooltip as RechartsTooltip, ResponsiveContainer } from 'recharts';
+import { PieChart, Pie, Cell, ResponsiveContainer, Tooltip as RechartsTooltip, LineChart, Line, XAxis, YAxis } from 'recharts';
 import useTaskStore from '../stores/taskStore';
 import TaskModal from '../components/TaskModal';
 
@@ -68,166 +68,183 @@ const Dashboard = () => {
 
   return (
     <>
-    <div className="animate-fade-in-up" style={{ paddingBottom: '40px' }}>
-          <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '32px' }}>
-            <div>
-              <h1 style={{ fontSize: '2rem', margin: 0, color: '#202124' }}>My Tasks</h1>
-              <p style={{ color: '#5F6368' }}>You have {tasks.length} task{tasks.length !== 1 && 's'} remaining.</p>
-            </div>
-            <button onClick={() => setIsModalOpen(true)} className="btn btn-google">
-              <Plus size={18} /> New Task
-            </button>
+      <div className="animate-fade-in-up" style={{ paddingBottom: '40px' }}>
+        <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '32px' }}>
+          <div>
+            <h1 style={{ fontSize: '2rem', margin: 0, color: '#202124' }}>My Tasks</h1>
+            <p style={{ color: '#5F6368' }}>You have {tasks.length} task{tasks.length !== 1 && 's'} remaining.</p>
           </div>
+          <button onClick={() => setIsModalOpen(true)} className="btn btn-google">
+            <Plus size={18} /> New Task
+          </button>
+        </div>
 
-      {/* Statistics Row */}
-      <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(200px, 1fr))', gap: '16px', marginBottom: '24px' }}>
-        <div className="glass" style={{ padding: '24px' }}>
-          <h3 style={{ margin: 0, color: 'var(--text-muted)', fontSize: '0.9rem', display: 'flex', alignItems: 'center', gap: '8px' }}><BarChart2 size={16} /> Total Tasks</h3>
-          <p style={{ margin: '8px 0 0 0', fontSize: '2rem', fontWeight: 'bold', color: '#202124' }}>{totalTasks}</p>
-        </div>
-        <div className="glass" style={{ padding: '24px' }}>
-          <h3 style={{ margin: 0, color: 'var(--text-muted)', fontSize: '0.9rem' }}>In Progress</h3>
-          <p style={{ margin: '8px 0 0 0', fontSize: '2rem', fontWeight: 'bold', color: '#202124' }}>{inProgressTasks}</p>
-        </div>
-        <div className="glass" style={{ padding: '24px' }}>
-          <h3 style={{ margin: 0, color: 'var(--text-muted)', fontSize: '0.9rem' }}>Completed</h3>
-          <p style={{ margin: '8px 0 0 0', fontSize: '2rem', fontWeight: 'bold', color: '#202124' }}>{doneTasks}</p>
-        </div>
-      </div>
-
-      {/* Charts Row */}
-      {tasks.length > 0 && (
-        <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(300px, 1fr))', gap: '16px', marginBottom: '32px' }}>
-          <div className="glass" style={{ padding: '24px', display: 'flex', flexDirection: 'column', alignItems: 'center' }}>
-            <h3 style={{ margin: '0 0 16px 0', color: 'var(--text-muted)', fontSize: '1rem' }}>Task Status</h3>
-            <div style={{ width: '100%', height: '220px' }}>
-              <ResponsiveContainer width="100%" height="100%">
-                <PieChart>
-                  <Pie data={statusData} cx="50%" cy="50%" innerRadius={60} outerRadius={80} paddingAngle={5} dataKey="value">
-                    {statusData.map((entry, index) => (
-                      <Cell key={`cell-${index}`} fill={entry.color} />
-                    ))}
-                  </Pie>
-                  <RechartsTooltip contentStyle={{ borderRadius: '8px', border: 'none', boxShadow: '0 4px 12px rgba(0,0,0,0.1)' }} />
-                </PieChart>
-              </ResponsiveContainer>
-            </div>
-            <div style={{ display: 'flex', gap: '16px', marginTop: '16px', fontSize: '0.85rem' }}>
-              {statusData.map((s, i) => (
-                <div key={i} style={{ display: 'flex', alignItems: 'center', gap: '6px' }}>
-                  <span style={{ width: '10px', height: '10px', borderRadius: '50%', background: s.color }}></span>
-                  {s.name}
-                </div>
-              ))}
-            </div>
+        {/* Statistics Row */}
+        <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(200px, 1fr))', gap: '16px', marginBottom: '24px' }}>
+          <div className="glass" style={{ padding: '24px' }}>
+            <h3 style={{ margin: 0, color: 'var(--text-muted)', fontSize: '0.9rem', display: 'flex', alignItems: 'center', gap: '8px' }}><BarChart2 size={16} /> Total Tasks</h3>
+            <p style={{ margin: '8px 0 0 0', fontSize: '2rem', fontWeight: 'bold', color: '#202124' }}>{totalTasks}</p>
           </div>
-
-          <div className="glass" style={{ padding: '24px', display: 'flex', flexDirection: 'column', alignItems: 'center' }}>
-            <h3 style={{ margin: '0 0 16px 0', color: 'var(--text-muted)', fontSize: '1rem' }}>Task Priorities</h3>
-            <div style={{ width: '100%', height: '220px' }}>
-              <ResponsiveContainer width="100%" height="100%">
-                <BarChart data={priorityData} margin={{ top: 10, right: 10, left: -20, bottom: 0 }}>
-                  <XAxis dataKey="name" tick={{ fontSize: 12, fill: '#5F6368' }} axisLine={false} tickLine={false} />
-                  <RechartsTooltip cursor={{ fill: 'rgba(0,0,0,0.05)' }} contentStyle={{ borderRadius: '8px', border: 'none', boxShadow: '0 4px 12px rgba(0,0,0,0.1)' }} />
-                  <Bar dataKey="count" fill="#4285F4" radius={[4, 4, 0, 0]} barSize={40} />
-                </BarChart>
-              </ResponsiveContainer>
-            </div>
+          <div className="glass" style={{ padding: '24px' }}>
+            <h3 style={{ margin: 0, color: 'var(--text-muted)', fontSize: '0.9rem' }}>In Progress</h3>
+            <p style={{ margin: '8px 0 0 0', fontSize: '2rem', fontWeight: 'bold', color: '#202124' }}>{inProgressTasks}</p>
+          </div>
+          <div className="glass" style={{ padding: '24px' }}>
+            <h3 style={{ margin: 0, color: 'var(--text-muted)', fontSize: '0.9rem' }}>Completed</h3>
+            <p style={{ margin: '8px 0 0 0', fontSize: '2rem', fontWeight: 'bold', color: '#202124' }}>{doneTasks}</p>
           </div>
         </div>
-      )}
 
-      {/* Search & Filter Bar */}
-      <div className="glass" style={{ padding: '16px', marginBottom: '32px', display: 'flex', gap: '16px', flexWrap: 'wrap', alignItems: 'center' }}>
-        <div style={{ flex: '1 1 300px', position: 'relative' }}>
-          <Search size={18} style={{ position: 'absolute', top: '14px', left: '16px', color: '#5F6368' }} />
-          <input 
-            type="text" 
-            placeholder="Search tasks by title..." 
-            value={searchQuery}
-            onChange={(e) => setSearchQuery(e.target.value)}
-            className="google-input" 
-            style={{ paddingLeft: '44px', marginBottom: 0, background: '#fff' }}
-          />
-        </div>
-        <select className="google-input" style={{ flex: '1 1 150px', marginBottom: 0, background: '#fff' }} value={statusFilter} onChange={(e) => setStatusFilter(e.target.value)}>
-          <option value="">All Statuses</option>
-          <option value="todo">To Do</option>
-          <option value="inprogress">In Progress</option>
-          <option value="done">Done</option>
-        </select>
-        <select className="google-input" style={{ flex: '1 1 150px', marginBottom: 0, background: '#fff' }} value={priorityFilter} onChange={(e) => setPriorityFilter(e.target.value)}>
-          <option value="">All Priorities</option>
-          <option value="low">Low</option>
-          <option value="medium">Medium</option>
-          <option value="high">High</option>
-        </select>
-      </div>
+        {/* Charts Row */}
+        {tasks.length > 0 && (
+          <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(300px, 1fr))', gap: '16px', marginBottom: '32px' }}>
+            <div className="glass" style={{ padding: '24px', display: 'flex', flexDirection: 'column', alignItems: 'center' }}>
+              <h3 style={{ margin: '0 0 16px 0', color: 'var(--text-muted)', fontSize: '1rem' }}>Task Status</h3>
+              <div style={{ width: '100%', height: '220px' }}>
+                <ResponsiveContainer width="100%" height={220}>
+                  <PieChart>
+                    <Pie
+                      data={statusData}               // ข้อมูลสถานะงาน
+                      cx="50%"                        // จุดศูนย์กลาง x
+                      cy="50%"                        // จุดศูนย์กลาง y
+                      innerRadius={60}                // ขนาดวงใน → ทำเป็น doughnut
+                      outerRadius={80}                // ขนาดวงนอก
+                      paddingAngle={5}                // ช่องว่างระหว่าง slice
+                      dataKey="value"                 // ใช้ value ของแต่ละ slice
+                      label={({ name, percent }) => `${name} ${(percent * 100).toFixed(0)}%`}  // แสดง label ข้างนอก
+                      labelLine={{ stroke: '#ccc', strokeWidth: 1 }}  // เส้นเชื่อม label
+                    >
+                      {statusData.map((entry, index) => (
+                        <Cell key={`cell-${index}`} fill={entry.color} />
+                      ))}
+                    </Pie>
+                    <RechartsTooltip
+                      contentStyle={{
+                        borderRadius: '8px',
+                        border: 'none',
+                        boxShadow: '0 4px 12px rgba(0,0,0,0.1)'
+                      }}
+                    />
+                  </PieChart>
+                </ResponsiveContainer>
+              </div>
+              <div style={{ display: 'flex', gap: '16px', marginTop: '16px', fontSize: '0.85rem' }}>
+                {statusData.map((s, i) => (
+                  <div key={i} style={{ display: 'flex', alignItems: 'center', gap: '6px' }}>
+                    <span style={{ width: '10px', height: '10px', borderRadius: '50%', background: s.color }}></span>
+                    {s.name}
+                  </div>
+                ))}
+              </div>
+            </div>
 
-      {error && (
-        <div style={{ display: 'flex', alignItems: 'center', gap: '8px', background: 'rgba(239,68,68,0.1)', color: 'var(--danger)', padding: '16px', borderRadius: '8px', marginBottom: '24px' }}>
-          <AlertCircle size={20} /> {error}
-        </div>
-      )}
+            <div className="glass" style={{ padding: '24px', display: 'flex', flexDirection: 'column', alignItems: 'center' }}>
+              <h3 style={{ margin: '0 0 16px 0', color: 'var(--text-muted)', fontSize: '1rem' }}>Task Priorities</h3>
+              <div style={{ width: '100%', height: '220px' }}>
+                <ResponsiveContainer width="100%" height={220}>
+                  <LineChart data={priorityData} margin={{ top: 10, right: 10, left: 0, bottom: 0 }}>
+                    <XAxis dataKey="name" tick={{ fontSize: 12, fill: '#5F6368' }} />
+                    <YAxis tick={{ fontSize: 12, fill: '#5F6368' }} />
+                    <RechartsTooltip contentStyle={{ borderRadius: '8px', border: 'none', boxShadow: '0 4px 12px rgba(0,0,0,0.1)' }} />
+                    <Line type="monotone" dataKey="count" stroke="#4285F4" strokeWidth={3} dot={{ r: 5 }} />
+                  </LineChart>
+                </ResponsiveContainer>
+              </div>
+            </div>
+          </div>
+        )}
 
-      {isLoading && tasks.length === 0 ? (
-        <div style={{ display: 'flex', justifyContent: 'center', padding: '60px' }}>
-          <div className="spinner" style={{ width: '40px', height: '40px' }} />
+        {/* Search & Filter Bar */}
+        <div className="glass" style={{ padding: '16px', marginBottom: '32px', display: 'flex', gap: '16px', flexWrap: 'wrap', alignItems: 'center' }}>
+          <div style={{ flex: '1 1 300px', position: 'relative' }}>
+            <Search size={18} style={{ position: 'absolute', top: '14px', left: '16px', color: '#5F6368' }} />
+            <input
+              type="text"
+              placeholder="Search tasks by title..."
+              value={searchQuery}
+              onChange={(e) => setSearchQuery(e.target.value)}
+              className="google-input"
+              style={{ paddingLeft: '44px', marginBottom: 0, background: '#fff' }}
+            />
+          </div>
+          <select className="google-input" style={{ flex: '1 1 150px', marginBottom: 0, background: '#fff' }} value={statusFilter} onChange={(e) => setStatusFilter(e.target.value)}>
+            <option value="">All Statuses</option>
+            <option value="todo">To Do</option>
+            <option value="inprogress">In Progress</option>
+            <option value="done">Done</option>
+          </select>
+          <select className="google-input" style={{ flex: '1 1 150px', marginBottom: 0, background: '#fff' }} value={priorityFilter} onChange={(e) => setPriorityFilter(e.target.value)}>
+            <option value="">All Priorities</option>
+            <option value="low">Low</option>
+            <option value="medium">Medium</option>
+            <option value="high">High</option>
+          </select>
         </div>
-      ) : tasks.length === 0 ? (
-        <div className="glass" style={{ padding: '60px', textAlign: 'center', color: 'var(--text-muted)' }}>
-          <CheckCircle size={48} style={{ opacity: 0.5, marginBottom: '16px' }} />
-          <h3>No tasks found</h3>
-          <p>You're all caught up! Enjoy your free time or add a new task.</p>
-        </div>
-      ) : (
-        <div style={{ display: 'grid', gap: '16px' }}>
-          {tasks.map(task => (
-            <div key={task._id} className="glass-card" style={{ padding: '20px', display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
-              <div style={{ display: 'flex', alignItems: 'center', gap: '16px', flex: 1 }}>
-                <button 
-                  onClick={() => toggleTaskStatus(task)}
-                  style={{
-                    width: '24px', height: '24px', borderRadius: '50%',
-                    border: `2px solid ${task.status === 'done' ? 'var(--success)' : 'var(--text-muted)'}`,
-                    background: task.status === 'done' ? 'var(--success)' : 'transparent',
-                    color: 'white', display: 'flex', alignItems: 'center', justifyContent: 'center', cursor: 'pointer', transition: 'all 0.2s'
-                  }}
-                >
-                  {task.status === 'done' && <CheckCircle size={14} />}
-                </button>
-                
-                <div style={{ flex: 1, cursor: 'pointer' }}>
-                  <Link to={`/tasks/${task._id}`} style={{ textDecoration: 'none', color: 'inherit' }}>
-                    <h3 style={{ margin: 0, fontSize: '1.1rem', textDecoration: task.status === 'done' ? 'line-through' : 'none', opacity: task.status === 'done' ? 0.6 : 1, transition: 'all 0.2s' }}>
-                      {task.title}
-                    </h3>
-                  </Link>
-                  <div style={{ display: 'flex', gap: '12px', marginTop: '8px', alignItems: 'center' }}>
-                    <span className={`badge badge-${task.status}`}>{task.status === 'inprogress' ? 'in progress' : task.status}</span>
-                    <span className={`badge badge-priority-${task.priority}`}>{task.priority}</span>
+
+        {error && (
+          <div style={{ display: 'flex', alignItems: 'center', gap: '8px', background: 'rgba(239,68,68,0.1)', color: 'var(--danger)', padding: '16px', borderRadius: '8px', marginBottom: '24px' }}>
+            <AlertCircle size={20} /> {error}
+          </div>
+        )}
+
+        {isLoading && tasks.length === 0 ? (
+          <div style={{ display: 'flex', justifyContent: 'center', padding: '60px' }}>
+            <div className="spinner" style={{ width: '40px', height: '40px' }} />
+          </div>
+        ) : tasks.length === 0 ? (
+          <div className="glass" style={{ padding: '60px', textAlign: 'center', color: 'var(--text-muted)' }}>
+            <CheckCircle size={48} style={{ opacity: 0.5, marginBottom: '16px' }} />
+            <h3>No tasks found</h3>
+            <p>You're all caught up! Enjoy your free time or add a new task.</p>
+          </div>
+        ) : (
+          <div style={{ display: 'grid', gap: '16px' }}>
+            {tasks.map(task => (
+              <div key={task._id} className="glass-card" style={{ padding: '20px', display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+                <div style={{ display: 'flex', alignItems: 'center', gap: '16px', flex: 1 }}>
+                  <button
+                    onClick={() => toggleTaskStatus(task)}
+                    style={{
+                      width: '24px', height: '24px', borderRadius: '50%',
+                      border: `2px solid ${task.status === 'done' ? 'var(--success)' : 'var(--text-muted)'}`,
+                      background: task.status === 'done' ? 'var(--success)' : 'transparent',
+                      color: 'white', display: 'flex', alignItems: 'center', justifyContent: 'center', cursor: 'pointer', transition: 'all 0.2s'
+                    }}
+                  >
+                    {task.status === 'done' && <CheckCircle size={14} />}
+                  </button>
+
+                  <div style={{ flex: 1, cursor: 'pointer' }}>
+                    <Link to={`/tasks/${task._id}`} style={{ textDecoration: 'none', color: 'inherit' }}>
+                      <h3 style={{ margin: 0, fontSize: '1.1rem', textDecoration: task.status === 'done' ? 'line-through' : 'none', opacity: task.status === 'done' ? 0.6 : 1, transition: 'all 0.2s' }}>
+                        {task.title}
+                      </h3>
+                    </Link>
+                    <div style={{ display: 'flex', gap: '12px', marginTop: '8px', alignItems: 'center' }}>
+                      <span className={`badge badge-${task.status}`}>{task.status === 'inprogress' ? 'in progress' : task.status}</span>
+                      <span className={`badge badge-priority-${task.priority}`}>{task.priority}</span>
+                    </div>
                   </div>
                 </div>
-              </div>
 
-              <div style={{ display: 'flex', gap: '8px' }}>
-                <button onClick={() => openEditModal(task)} className="btn btn-outline" style={{ padding: '8px' }}>
-                  <Edit2 size={16} />
-                </button>
-                <button onClick={() => deleteTask(task._id)} className="btn btn-danger" style={{ padding: '8px' }}>
-                  <Trash2 size={16} />
-                </button>
+                <div style={{ display: 'flex', gap: '8px' }}>
+                  <button onClick={() => openEditModal(task)} className="btn btn-outline" style={{ padding: '8px' }}>
+                    <Edit2 size={16} />
+                  </button>
+                  <button onClick={() => deleteTask(task._id)} className="btn btn-danger" style={{ padding: '8px' }}>
+                    <Trash2 size={16} />
+                  </button>
+                </div>
               </div>
-            </div>
-          ))}
-        </div>
-      )}
-    </div>
+            ))}
+          </div>
+        )}
+      </div>
 
-      <TaskModal 
-        isOpen={isModalOpen} 
-        onClose={closeModals} 
-        onSubmit={editingTask ? handleUpdateTask : handleCreateTask} 
+      <TaskModal
+        isOpen={isModalOpen}
+        onClose={closeModals}
+        onSubmit={editingTask ? handleUpdateTask : handleCreateTask}
         initialData={editingTask}
         isLoading={isLoading}
       />

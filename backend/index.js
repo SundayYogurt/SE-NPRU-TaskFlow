@@ -41,17 +41,20 @@ app.use("/api/v1/tasks", taskRoutes);
 
 // Swagger disabled for now
 
-if(!DB_URL){
-    console.error("DB_URL is not defined in .env file")
-}else{
-    mongoose.connect(DB_URL).then(() =>{
-        console.log("Connected to MongoDB Successfully!");
-    }).catch((error) => {
-        console.error("MongoDB connection error:", error)
-    }
-    )
+if (process.env.NODE_ENV !== 'test') {
+  if(!DB_URL) {
+      console.error("DB_URL is not defined in .env file")
+  } else {
+      mongoose.connect(DB_URL).then(() => {
+          console.log("Connected to MongoDB Successfully!");
+      }).catch((error) => {
+          console.error("MongoDB connection error:", error)
+      });
+  }
 }
 
-app.listen(PORT,() =>
-  console.log(`Server on ${PORT}`)
-);
+if (require.main === module) {
+  app.listen(PORT, () => console.log(`Server on ${PORT}`));
+}
+
+module.exports = app;
