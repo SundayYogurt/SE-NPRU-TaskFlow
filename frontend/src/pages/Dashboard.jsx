@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import { Link } from 'react-router-dom';
-import { Plus, Trash2, Edit2, AlertCircle, Clock, CheckCircle } from 'lucide-react';
+import { Plus, Trash2, Edit2, AlertCircle, Clock, CheckCircle, Search, BarChart2 } from 'lucide-react';
 import useTaskStore from '../stores/taskStore';
 import TaskModal from '../components/TaskModal';
 
@@ -8,10 +8,21 @@ const Dashboard = () => {
   const { tasks, isLoading, error, fetchTasks, addTask, deleteTask, updateTask } = useTaskStore();
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [editingTask, setEditingTask] = useState(null);
+  const [searchQuery, setSearchQuery] = useState('');
+  const [statusFilter, setStatusFilter] = useState('');
+  const [priorityFilter, setPriorityFilter] = useState('');
 
   useEffect(() => {
-    fetchTasks();
-  }, [fetchTasks]);
+    const delayDebounceFn = setTimeout(() => {
+      fetchTasks({ search: searchQuery, status: statusFilter, priority: priorityFilter });
+    }, 400);
+
+    return () => clearTimeout(delayDebounceFn);
+  }, [searchQuery, statusFilter, priorityFilter, fetchTasks]);
+
+  const totalTasks = tasks.length;
+  const doneTasks = tasks.filter(t => t.status === 'done').length;
+  const inProgressTasks = tasks.filter(t => t.status === 'in-progress').length;
 
   const handleCreateTask = async (taskData) => {
     await addTask(taskData);
@@ -52,6 +63,49 @@ const Dashboard = () => {
         <button onClick={() => setIsModalOpen(true)} className="btn btn-primary">
           <Plus size={18} /> New Task
         </button>
+      </div>
+
+      {/* Statistics Row */}
+      <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(200px, 1fr))', gap: '16px', marginBottom: '24px' }}>
+        <div className="glass" style={{ padding: '24px', borderLeft: '4px solid var(--primary)' }}>
+          <h3 style={{ margin: 0, color: 'var(--text-muted)', fontSize: '0.9rem', display: 'flex', alignItems: 'center', gap: '8px' }}><BarChart2 size={16} /> Total Tasks</h3>
+          <p style={{ margin: '8px 0 0 0', fontSize: '2rem', fontWeight: 'bold', color: '#202124' }}>{totalTasks}</p>
+        </div>
+        <div className="glass" style={{ padding: '24px', borderLeft: '4px solid var(--warning)' }}>
+          <h3 style={{ margin: 0, color: 'var(--text-muted)', fontSize: '0.9rem' }}>In Progress</h3>
+          <p style={{ margin: '8px 0 0 0', fontSize: '2rem', fontWeight: 'bold', color: '#202124' }}>{inProgressTasks}</p>
+        </div>
+        <div className="glass" style={{ padding: '24px', borderLeft: '4px solid var(--success)' }}>
+          <h3 style={{ margin: 0, color: 'var(--text-muted)', fontSize: '0.9rem' }}>Completed</h3>
+          <p style={{ margin: '8px 0 0 0', fontSize: '2rem', fontWeight: 'bold', color: '#202124' }}>{doneTasks}</p>
+        </div>
+      </div>
+
+      {/* Search & Filter Bar */}
+      <div className="glass" style={{ padding: '16px', marginBottom: '32px', display: 'flex', gap: '16px', flexWrap: 'wrap', alignItems: 'center' }}>
+        <div style={{ flex: '1 1 300px', position: 'relative' }}>
+          <Search size={18} style={{ position: 'absolute', top: '14px', left: '16px', color: '#5F6368' }} />
+          <input 
+            type="text" 
+            placeholder="Search tasks by title..." 
+            value={searchQuery}
+            onChange={(e) => setSearchQuery(e.target.value)}
+            className="google-input" 
+            style={{ paddingLeft: '44px', marginBottom: 0, background: '#fff' }}
+          />
+        </div>
+        <select className="google-input" style={{ flex: '1 1 150px', marginBottom: 0, background: '#fff' }} value={statusFilter} onChange={(e) => setStatusFilter(e.target.value)}>
+          <option value="">All Statuses</option>
+          <option value="todo">To Do</option>
+          <option value="in-progress">In Progress</option>
+          <option value="done">Done</option>
+        </select>
+        <select className="google-input" style={{ flex: '1 1 150px', marginBottom: 0, background: '#fff' }} value={priorityFilter} onChange={(e) => setPriorityFilter(e.target.value)}>
+          <option value="">All Priorities</option>
+          <option value="low">Low</option>
+          <option value="medium">Medium</option>
+          <option value="high">High</option>
+        </select>
       </div>
 
       {error && (

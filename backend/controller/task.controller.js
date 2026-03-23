@@ -38,12 +38,15 @@ const getTasks = async (req, res) => {
     const userId = req.user.id;
 
     // filter optional
-    const { status, priority } = req.query;
+    const { status, priority, search } = req.query;
 
     const filter = { user: userId };
 
     if (status) filter.status = status;
     if (priority) filter.priority = priority;
+    if (search) {
+      filter.title = { $regex: search, $options: "i" }; // Case-insensitive search
+    }
 
     const tasks = await TaskModel.find(filter).sort({ createdAt: -1 });
 

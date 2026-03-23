@@ -7,13 +7,22 @@ const useTaskStore = create((set, get) => ({
   isLoading: false,
   error: null,
 
-  fetchTasks: async () => {
+  fetchTasks: async (filters = {}) => {
     set({ isLoading: true, error: null });
     try {
-      const response = await api.get('/tasks');
-      set({ tasks: response.data.tasks || [], isLoading: false });
-    } catch (error) {
-      const msg = error.response?.data?.message || 'Failed to fetch tasks';
+      // Build query string from filters
+      const queryParams = new URLSearchParams();
+      if (filters.status) queryParams.append('status', filters.status);
+      if (filters.priority) queryParams.append('priority', filters.priority);
+      if (filters.search) queryParams.append('search', filters.search);
+      
+      const queryString = queryParams.toString();
+      const endpoint = queryString ? `/tasks?${queryString}` : '/tasks';
+      
+      const res = await api.get(endpoint);
+      set({ tasks: res.data.tasks || [], isLoading: false });
+    } catch (err) {
+      const msg = err.response?.data?.message || 'Failed to fetch tasks';
       set({ isLoading: false, error: msg });
       toast.error(msg);
     }
