@@ -314,9 +314,19 @@ body {
 }
 
 .badge-todo { background: #EBF4FF; color: #3182CE; border: 1px solid #BEE3F8; }
-.badge-in-progress { background: #FEFCBF; color: #D69E2E; border: 1px solid #F6E05E; }
+.badge-inprogress { background: #FEFCBF; color: #D69E2E; border: 1px solid #F6E05E; }
 .badge-done { background: #C6F6D5; color: #38A169; border: 1px solid #9AE6B4; }
 
 .badge-priority-high { color: var(--danger); background: #FED7D7; }
 .badge-priority-medium { color: #D69E2E; background: #FEFCBF; }
 .badge-priority-low { color: #38A169; background: #C6F6D5; }
+
+/* Responsive Overrides */
+@media (max-width: 768px) {
+  .glass { padding: 16px !important; }
+  .glass-card { padding: 16px !important; flex-direction: column; align-items: flex-start !important; }
+  .btn { padding: 10px 16px; font-size: 0.85rem; }
+  h1 { font-size: 1.5rem !important; }
+  .google-input { font-size: 0.95rem; }
+  .chart-wrapper { min-height: 250px; }
+}
