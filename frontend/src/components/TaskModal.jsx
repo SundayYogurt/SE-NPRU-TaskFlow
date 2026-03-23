@@ -70,7 +70,7 @@ const TaskModal = ({ isOpen, onClose, onSubmit, initialData = null, isLoading = 
                   <label style={{ fontSize: '0.8rem', color: '#5F6368', marginLeft: '4px', marginBottom: '8px', display: 'block', fontWeight: 500 }}>Status</label>
                   <select className="google-input" style={{ padding: '12px 16px' }} value={status} onChange={e => setStatus(e.target.value)}>
                     <option value="todo">To Do</option>
-                    <option value="in-progress">In Progress</option>
+                    <option value="inprogress">In Progress</option>
                     <option value="done">Done</option>
                   </select>
                 </div>

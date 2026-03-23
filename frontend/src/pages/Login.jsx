@@ -60,7 +60,7 @@ const Login = () => {
                 onChange={(e) => setUsername(e.target.value)}
                 required
               />
-              <label className="google-label">Username or Email</label>
+              <label className="google-label">Username</label>
             </div>
             
             <div className="google-input-group">

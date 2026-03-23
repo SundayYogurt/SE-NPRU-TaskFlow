@@ -22,7 +22,7 @@ const Dashboard = () => {
 
   const totalTasks = tasks.length;
   const doneTasks = tasks.filter(t => t.status === 'done').length;
-  const inProgressTasks = tasks.filter(t => t.status === 'in-progress').length;
+  const inProgressTasks = tasks.filter(t => t.status === 'inprogress').length;
 
   const handleCreateTask = async (taskData) => {
     await addTask(taskData);
@@ -55,15 +55,23 @@ const Dashboard = () => {
   return (
     <>
     <div className="animate-fade-in-up">
-      <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '32px' }}>
-        <div>
-          <h1 style={{ fontSize: '2rem', margin: 0 }}>My Tasks</h1>
-          <p style={{ color: 'var(--text-muted)' }}>You have {tasks.length} task{tasks.length !== 1 && 's'} remaining.</p>
+      <div className="mac-window" style={{ display: 'flex', flexDirection: 'column', minHeight: '80vh', marginBottom: '32px' }}>
+        <div className="mac-header" style={{ position: 'sticky', top: 0, zIndex: 10 }}>
+          <span className="mac-dot close"></span>
+          <span className="mac-dot minimize"></span>
+          <span className="mac-dot maximize"></span>
         </div>
-        <button onClick={() => setIsModalOpen(true)} className="btn btn-primary">
-          <Plus size={18} /> New Task
-        </button>
-      </div>
+        
+        <div style={{ padding: '32px', flex: 1, background: '#F8F9FA' }}>
+          <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '32px' }}>
+            <div>
+              <h1 style={{ fontSize: '2rem', margin: 0, color: '#202124' }}>My Tasks</h1>
+              <p style={{ color: '#5F6368' }}>You have {tasks.length} task{tasks.length !== 1 && 's'} remaining.</p>
+            </div>
+            <button onClick={() => setIsModalOpen(true)} className="btn btn-google">
+              <Plus size={18} /> New Task
+            </button>
+          </div>
 
       {/* Statistics Row */}
       <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(200px, 1fr))', gap: '16px', marginBottom: '24px' }}>
@@ -97,7 +105,7 @@ const Dashboard = () => {
         <select className="google-input" style={{ flex: '1 1 150px', marginBottom: 0, background: '#fff' }} value={statusFilter} onChange={(e) => setStatusFilter(e.target.value)}>
           <option value="">All Statuses</option>
           <option value="todo">To Do</option>
-          <option value="in-progress">In Progress</option>
+          <option value="inprogress">In Progress</option>
           <option value="done">Done</option>
         </select>
         <select className="google-input" style={{ flex: '1 1 150px', marginBottom: 0, background: '#fff' }} value={priorityFilter} onChange={(e) => setPriorityFilter(e.target.value)}>
@@ -148,7 +156,7 @@ const Dashboard = () => {
                     </h3>
                   </Link>
                   <div style={{ display: 'flex', gap: '12px', marginTop: '8px', alignItems: 'center' }}>
-                    <span className={`badge badge-${task.status}`}>{task.status.replace('-', ' ')}</span>
+                    <span className={`badge badge-${task.status}`}>{task.status === 'inprogress' ? 'in progress' : task.status}</span>
                     <span className={`badge badge-priority-${task.priority}`}>{task.priority}</span>
                   </div>
                 </div>
@@ -166,6 +174,8 @@ const Dashboard = () => {
           ))}
         </div>
       )}
+        </div>
+      </div>
     </div>
 
       <TaskModal 
