@@ -33,53 +33,58 @@ const TaskModal = ({ isOpen, onClose, onSubmit, initialData = null, isLoading = 
 
   return (
     <div style={{ position: 'fixed', inset: 0, display: 'flex', alignItems: 'center', justifyContent: 'center', zIndex: 50, background: 'rgba(0,0,0,0.5)',backdropFilter: 'blur(4px)' }}>
-      <div className="glass animate-scale-in" style={{ width: 'calc(100% - 32px)', maxWidth: '500px', padding: '32px', position: 'relative', borderRadius: '16px', maxHeight: '90vh', overflowY: 'auto' }}>
-        <button onClick={onClose} style={{ position: 'absolute', top: '16px', right: '16px', background: 'transparent', border: 'none', color: 'var(--text-muted)', cursor: 'pointer', padding: '8px', display: 'flex' }}>
-          <X size={24} />
-        </button>
+      <div className="mac-window animate-scale-in" style={{ width: 'calc(100% - 32px)', maxWidth: '500px', position: 'relative', maxHeight: '90vh', display: 'flex', flexDirection: 'column' }}>
+        {/* macOS Header */}
+        <div className="mac-header" style={{ position: 'sticky', top: 0, zIndex: 10 }}>
+          <span className="mac-dot close" onClick={onClose} style={{ cursor: 'pointer' }} title="Close"></span>
+          <span className="mac-dot minimize"></span>
+          <span className="mac-dot maximize"></span>
+        </div>
         
-        <h2 style={{ marginBottom: '20px', fontSize: '1.5rem' }}>{initialData ? 'Edit Task' : 'Create New Task'}</h2>
-        
-        <form onSubmit={handleSubmit}>
-          <div className="form-group">
-            <label>Task Title</label>
-            <input type="text" className="input-field" value={title} onChange={e => setTitle(e.target.value)} required placeholder="E.g. Finish React project" />
-          </div>
+        <div style={{ padding: '32px', overflowY: 'auto' }}>
+          <h2 style={{ marginBottom: '24px', fontSize: '1.5rem', color: '#202124', fontWeight: '500' }}>{initialData ? 'Edit Task' : 'Create New Task'}</h2>
           
-          <div className="form-group">
-            <label>Description</label>
-            <textarea className="input-field" rows={3} value={description} onChange={e => setDescription(e.target.value)} placeholder="Add some details..." />
-          </div>
-          
-          <div style={{ display: 'flex', gap: '16px' }}>
-            <div className="form-group" style={{ flex: 1 }}>
-              <label>Priority</label>
-              <select className="input-field" value={priority} onChange={e => setPriority(e.target.value)}>
-                <option value="low">Low</option>
-                <option value="medium">Medium</option>
-                <option value="high">High</option>
-              </select>
+          <form onSubmit={handleSubmit}>
+            <div className="google-input-group">
+              <input type="text" className="google-input" placeholder=" " value={title} onChange={e => setTitle(e.target.value)} required />
+              <label className="google-label">Task Title</label>
             </div>
             
-            {initialData && (
-              <div className="form-group" style={{ flex: 1 }}>
-                <label>Status</label>
-                <select className="input-field" value={status} onChange={e => setStatus(e.target.value)}>
-                  <option value="todo">To Do</option>
-                  <option value="in-progress">In Progress</option>
-                  <option value="done">Done</option>
+            <div className="google-input-group">
+              <textarea className="google-input" rows={3} placeholder=" " value={description} onChange={e => setDescription(e.target.value)} />
+              <label className="google-label">Description (optional)</label>
+            </div>
+            
+            <div style={{ display: 'flex', gap: '16px', marginBottom: '24px' }}>
+              <div style={{ flex: 1 }}>
+                <label style={{ fontSize: '0.8rem', color: '#5F6368', marginLeft: '4px', marginBottom: '8px', display: 'block', fontWeight: 500 }}>Priority</label>
+                <select className="google-input" style={{ padding: '12px 16px' }} value={priority} onChange={e => setPriority(e.target.value)}>
+                  <option value="low">Low</option>
+                  <option value="medium">Medium</option>
+                  <option value="high">High</option>
                 </select>
               </div>
-            )}
-          </div>
-          
-          <div style={{ display: 'flex', justifyContent: 'flex-end', gap: '12px', marginTop: '24px' }}>
-            <button type="button" className="btn btn-outline" onClick={onClose}>Cancel</button>
-            <button type="submit" className="btn btn-primary" disabled={isLoading || !title.trim()}>
-              {isLoading ? <div className="spinner"><span></span></div> : 'Save Task'}
-            </button>
-          </div>
-        </form>
+              
+              {initialData && (
+                <div style={{ flex: 1 }}>
+                  <label style={{ fontSize: '0.8rem', color: '#5F6368', marginLeft: '4px', marginBottom: '8px', display: 'block', fontWeight: 500 }}>Status</label>
+                  <select className="google-input" style={{ padding: '12px 16px' }} value={status} onChange={e => setStatus(e.target.value)}>
+                    <option value="todo">To Do</option>
+                    <option value="in-progress">In Progress</option>
+                    <option value="done">Done</option>
+                  </select>
+                </div>
+              )}
+            </div>
+            
+            <div style={{ display: 'flex', justifyContent: 'flex-end', gap: '12px', marginTop: '32px' }}>
+              <button type="button" className="btn btn-outline" onClick={onClose} style={{ borderRadius: '24px', padding: '10px 20px', border: '1px solid #DADCE0', color: '#5F6368', background: 'transparent' }}>Cancel</button>
+              <button type="submit" className="btn btn-google" disabled={isLoading || !title.trim()}>
+                {isLoading ? <div className="spinner"><span></span></div> : 'Save Task'}
+              </button>
+            </div>
+          </form>
+        </div>
       </div>
     </div>
   );

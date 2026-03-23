@@ -29,51 +29,59 @@ const Login = () => {
 
   return (
     <div className="auth-container">
-      <div className="glass auth-card animate-scale-in">
-        <div style={{ textAlign: 'center', marginBottom: '32px' }}>
-          <h1 style={{ fontSize: '2rem', marginBottom: '8px', color: 'var(--text-color)' }}>Welcome Back</h1>
-          <p style={{ color: 'var(--text-muted)' }}>Sign in to continue to TaskFlow Mini</p>
+      <div className="mac-window auth-card animate-scale-in" style={{ padding: 0 }}>
+        {/* macOS Header */}
+        <div className="mac-header">
+          <span className="mac-dot close"></span>
+          <span className="mac-dot minimize"></span>
+          <span className="mac-dot maximize"></span>
         </div>
 
-        {error && (
-          <div className="animate-fade-in-up" style={{ display: 'flex', alignItems: 'center', gap: '8px', background: 'rgba(239,68,68,0.1)', color: 'var(--danger)', padding: '12px', borderRadius: '8px', marginBottom: '20px', border: '1px solid rgba(239,68,68,0.2)' }}>
-            <AlertCircle size={20} />
-            <span style={{ fontSize: '0.9rem' }}>{error}</span>
-          </div>
-        )}
-
-        <form onSubmit={handleSubmit}>
-          <div className="form-group">
-            <label>Username or Email</label>
-            <input 
-              type="text" 
-              className="input-field" 
-              placeholder="johndoe" 
-              value={username}
-              onChange={(e) => setUsername(e.target.value)}
-              required
-            />
-          </div>
-          
-          <div className="form-group">
-            <label>Password</label>
-            <input 
-              type="password" 
-              className="input-field" 
-              placeholder="••••••••" 
-              value={password}
-              onChange={(e) => setPassword(e.target.value)}
-              required
-            />
+        <div style={{ padding: '40px' }}>
+          <div style={{ textAlign: 'center', marginBottom: '32px' }}>
+            <h1 style={{ fontSize: '2rem', marginBottom: '8px', color: '#202124', fontWeight: '400', fontFamily: 'Product Sans, Inter, sans-serif' }}>Sign in</h1>
+            <p style={{ color: '#5F6368' }}>Use your TaskFlow Account</p>
           </div>
 
-          <button type="submit" className="btn btn-primary" style={{ width: '100%', marginTop: '12px', padding: '14px' }} disabled={isLoading}>
-            {isLoading ? <div className="spinner" /> : <><LogIn size={20} /> Sign In</>}
-          </button>
-        </form>
+          {error && (
+            <div className="animate-fade-in-up" style={{ display: 'flex', alignItems: 'center', gap: '8px', background: '#FCE8E6', color: '#D93025', padding: '12px', borderRadius: '8px', marginBottom: '20px', border: '1px solid #FAD2CF' }}>
+              <AlertCircle size={20} />
+              <span style={{ fontSize: '0.9rem', fontWeight: 500 }}>{error}</span>
+            </div>
+          )}
 
-        <div style={{ textAlign: 'center', marginTop: '24px', fontSize: '0.9rem', color: 'var(--text-muted)' }}>
-          Don't have an account? <Link to="/register" style={{ color: 'var(--primary)', textDecoration: 'none', fontWeight: '500' }}>Create one</Link>
+          <form onSubmit={handleSubmit}>
+            <div className="google-input-group">
+              <input 
+                type="text" 
+                className="google-input" 
+                placeholder=" " 
+                value={username}
+                onChange={(e) => setUsername(e.target.value)}
+                required
+              />
+              <label className="google-label">Username or Email</label>
+            </div>
+            
+            <div className="google-input-group">
+              <input 
+                type="password" 
+                className="google-input" 
+                placeholder=" " 
+                value={password}
+                onChange={(e) => setPassword(e.target.value)}
+                required
+              />
+              <label className="google-label">Password</label>
+            </div>
+
+            <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginTop: '32px' }}>
+              <Link to="/register" style={{ color: '#1A73E8', textDecoration: 'none', fontWeight: '500', fontSize: '0.9rem' }}>Create account</Link>
+              <button type="submit" className="btn btn-google" disabled={isLoading}>
+                {isLoading ? <div className="spinner"><span></span></div> : 'Next'}
+              </button>
+            </div>
+          </form>
         </div>
       </div>
     </div>
